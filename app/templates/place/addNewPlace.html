@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- PAGE settings -->
+  <link rel="icon" href="">
+  <title>Create new place</title>
+
+  <!-- CSS dependencies -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="../../static/place/css/wireframe.css">
+  <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js"></script>
+  <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css" rel="stylesheet">
+  <style>
+    #map {
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body class="bg-light">
+ <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="#">East Trip</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbar2SupportedContent" aria-controls="navbar2SupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+      <div class="collapse navbar-collapse text-center justify-content-end" id="navbar2SupportedContent">
+        <ul class="navbar-nav">
+            {% if current_user.is_anonymous %}
+          <li class="nav-item mx-2">
+            <a class="nav-link"  href="{{ url_for('auth.login') }}">Вход &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              <br> </a>
+          </li>
+          <li class="nav-item mx-2">
+            <a class="nav-link" href="{{ url_for('auth.logout') }}">Регистрация &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+              <br> </a>
+          </li>
+            {% else %}
+            <div class="btn-group pi-draggable" draggable="true">
+            <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> {{ current_user.login }} </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#">Личный кабинет</a>
+              <a class="dropdown-item" href="{{ url_for('places.new_place') }}">Добавить новое место</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Смена email</a>
+              <a class="dropdown-item" href="#">Смена пароля</a>
+              <a class="dropdown-item" href="#">Смена логина</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выход</a>
+              {% endif %}
+            </div>
+            </div>
+        </ul>
+      </div>
+    </div>
+ </nav>
+  <div class="py-5">
+    <div class="container">
+      <div class="row">
+        <div class="text-center col-md-7 mx-auto"> <i class="fa d-block fa-bullseye fa-5x mb-4 text-info"></i>
+          <h2><b>Добавление нового места</b></h2>
+          <p class="lead">
+          	Обратите внимание на поля требующие заполнение. Название и адрес Вашего заведения будет переводиться в 2х формах, в оригинале и на латыне или наоборот.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 order-md-1">
+          <h4 class="mb-3"><b>Создать зеведение</b></h4>
+          <form method="post" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="row">
+              <div class="col-md-12 mb-6"> <label for="firstName">Фото</label>
+                  {{ form.upload() }}
+                  {% for error in form.upload.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+                <div class="invalid-feedback"> Valid first name is required. </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-5 mb-3"> <label for="firstName">Название на кириллице</label>
+                {{ form.cName(class="form-control", placeholder="", value="", required="") }}
+                  {% for error in form.cName.errors %}
+                      <span style="color: red;">[{{ error }}]</span>
+                  {% endfor %}
+              </div>
+              <div class="col-md-2 mb-3">
+              	<label for="transletterName"><span class="text-muted">Перевести на латынь</span></label>
+              	<button id="transletterName" class="form-control">Перевод</button>
+              </div>
+              <div class="col-md-5 mb-3"> <label for="lastName">Название на латыне</label>
+                {{ form.lName(class="form-control", placeholder="", value="", required="") }}
+                {% for error in form.lName.error %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="mb-3"> <label for="email">Email <span class="text-muted">(Optional)</span></label>
+              {{ form.email(class="form-control", placeholder="you@example.com") }}
+              {% for error in form.email.error %}
+                <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+              <div class="invalid-feedback"> Please enter a valid email address for shipping updates. </div>
+            </div>
+            <div class="mb-3"> <label for="website">Website<span class="text-muted">(Optional)</span></label>
+              {{ form.website(class="form-control", placeholder="website") }}
+              {% for error in form.website.error %}
+                <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+            </div>
+            <div class="row">
+            <div class="col-md-9 mb-3"> <label for="cAddress">Адрес <span class="text-muted">(Кириллица)</span></label>
+              {{ form.cAddress(class="form-control", placeholder="") }}
+              {% for error in form.cAddress.error %}
+                <span style="color: red;">[{{ error }}]</span>
+              {% endfor %}
+              </div>
+             <div class="col-md-3 mb-3">
+             	<label for="transletterAddress"><span class="text-muted">Перевести на латынь</span></label>
+              	<button id="transletterAddress" class="form-control">Перевод</button>
+            </div>
+              <div class="col-md-9 mb-3"> <label for="cAddress">Адрес <span class="text-muted">(Латынь)</span></label>
+                {{ form.lAddress(class="form-control", placeholder="", value="", required="") }}
+                {% for error in form.lAddress.error %}
+                  <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+            </div>
+             <div class="row">
+              <div class="col-md-4 mb-3"> <label for="country">Страна</label>
+                <select class="custom-select d-block w-100" id="country" name="country">
+                  {% for country in form.country %}
+                      <tr>
+                        <td>{{ country }}</td>
+                        <td>{{ country.label }}</td>
+                      </tr>
+                  {% endfor %}
+                </select>
+                {% for error in form.country.error %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+             <div class="col-md-4 mb-3"> <label for="state">Город</label>
+                <select class="custom-select d-block w-100" id="city" name="city">
+                  {% for city in form.city %}
+                      <tr>
+                        <td>{{ city }}</td>
+                        <td>{{ city.label }}</td>
+                      </tr>
+                  {% endfor %}
+                </select>
+                {% for error in form.city.error %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+              </div>
+             <div class="col-md-4 mb-3"> <label for="placeType">Тип заведения (*обязательно ознакомиться)</label>
+                <select class="custom-select d-block w-100" id="type_establ" name="type_establ">
+                  {% for type_establ in form.type_establ %}
+                      <tr>
+                        <td>{{ type_establ }}</td>
+                        <td>{{ type_establ.label }}</td>
+                      </tr>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="invalid-feedback"> Please provide a valid state. </div>
+             </div>
+             <hr class="mb-4">
+            <div class="mb-3">
+              <h4 class="mb-3"><b>График работы</b></h4> <label>Настройки</label>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="open_time">Открытие</label>
+                    {{ form.oSet(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="close_time">Закрытие</label>
+                     {{ form.cSet(class="form-control", type="time") }} </div>
+                  <div class="mb-6 col-md-6 m-0"> <label>Установить время</label>
+                  <div class="row">
+                    <button name="setWeek" id="setWeek" class="form-control col-md-3">Все дни</button>
+                    <button name="setWeekdays" id="setWeekdays" class="form-control col-md-3">Будни</button>
+                    <button name="setWeekends" id="setWeekends" class="form-control col-md-3">Выходные</button>
+                  </div>
+                </div>
+              </div>
+                    {% for var in form.open_var %}
+                    <div class="custom-control custom-radio">
+                    <tr>
+                        <td>{{ var(class="custom-control-input") }}</td>
+                        <td>{{ var.label(class="custom-control-label") }}</td>
+                    </tr>
+                    </div>
+                    {% endfor %}
+              <button name="setEighthours" id="setEighthours" class="form-control col-md-6" disabled="true"> Поставить 8-часовой день (введите время открытия\закрытия) </button> <label>Часы работы</label>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в понедельник</label>
+                  {{ form.oMon(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в понедельник</label>
+                  {{ form.cMon(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие во вторник</label>
+                  {{ form.oTue(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие во вторник</label>
+                 {{ form.cTue(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в среду</label>
+                  {{ form.oWed(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в среду</label>
+                  {{ form.cWed(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в четверг</label>
+                  {{ form.oThu(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в четверг</label>
+                  {{ form.cThu(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в пятницу</label>
+                  {{ form.oFri(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в пятницу</label>
+                  {{ form.cFri(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в субботу</label>
+                  {{ form.oSat(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в субботу</label>
+                  {{ form.cSat(class="form-control", type="time") }} </div>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-md-3"> <label for="oMon">Открытие в воскресенье</label>
+                 {{ form.oSun(class="form-control", type="time") }} </div>
+                <div class="mb-3 col-md-3"> <label for="cMon">Закрытие в воскресенье</label>
+                 {{ form.cSun(class="form-control", type="time") }} </div>
+              </div>
+              <hr class="mb-4">
+              <h4 class="mb-3"><b>Финансы</b></h4>
+              <div class="d-block my-3"> <label>Возможные способы оплаты (кроме наличных)</label>
+                   {% for var in form.way_to_pay %}
+                    <div class="custom-control custom-radio">
+                        <td>{{ var(class="custom-control-input", type="checkbox") }}</td>
+                        <td>{{ var.label(class="custom-control-label") }}</td>
+                    </div>
+                    {% endfor %}
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3"> <label for="price">Средний чек в заведении</label>
+                  {{ form.average_check(class="form-control", step="0.1", type="number") }}
+                  <small class="text-muted">Округлить до целого числа</small>
+                    <div class="col-md-6 mb-3"> <label for="currency">Валюта</label> <select class="custom-select d-block w-100" id="currency" name="currency">
+                    {% for type in form.currency %}
+                      <tr>
+                        <td>{{ type }}</td>
+                        <td>{{ type.label }}</td>
+                      </tr>
+                    {% endfor %}
+                	</select> </div>
+                </div>
+              </div>
+                <hr class="mb-4">
+              <h4 class="mb-3"><b>Комфорт</b></h4>
+              <div class="d-block my-3"> <label>Туризм</label>
+                {% for var in form.tourism %}
+                    <div class="custom-control custom-radio">
+                        <td>{{ var(class="custom-control-input", type="checkbox") }}</td>
+                        <td>{{ var.label(class="custom-control-label") }}</td>
+                    </div>
+                {% endfor %}
+              </div>
+                           </div>
+              <div class="d-block my-3"> <label>Сервисы</label>
+                  {% for var in form.services %}
+                    <div class="custom-control custom-radio">
+                        <td>{{ var(class="custom-control-input", type="checkbox") }}</td>
+                        <td>{{ var.label(class="custom-control-label") }}</td>
+                    </div>
+                  {% endfor %}
+              </div>
+              <div class="d-block my-3"> <label>Раздел иклюзии</label>
+                  {% for var in form.sections_inclusiveness %}
+                    <div class="custom-control custom-radio">
+                        <td>{{ var(class="custom-control-input", type="checkbox") }}</td>
+                        <td>{{ var.label(class="custom-control-label") }}</td>
+                    </div>
+                  {% endfor %}
+              </div>
+              <hr class="mb-4">
+              <div class="form-group row"> <label class="col-md-4 col-form-label text-md-right" for="location">Location</label>
+                <div class="col-md-6">
+                  {{ form.location(class="form-control") }} </div>
+              </div>
+              <div class="form-group row"> <label class="col-md-12">Выберите точку на карте</label>
+                <div id="map" style="height: 300px;"></div>
+              </div>
+              {{ form.create(class="btn btn-primary btn-lg btn-block") }}
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="py-5 text-muted text-center">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 my-4">
+            <p class="mb-1">© 2017-2018 Company Name</p>
+            <ul class="list-inline">
+              <li class="list-inline-item">
+                <a href="#">Privacy</a>
+              </li>
+              <li class="list-inline-item">
+                <a href="#">Terms</a>
+              </li>
+              <li class="list-inline-item">
+                <a href="#">Support</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="../../static/place/js/validation.js"></script>
+    <script type="text/javascript">
+      mapboxgl.accessToken = 'pk.eyJ1IjoidGVybm93eSIsImEiOiJjamR2dWNkZ2cyeTV5Mnhxb3ozcHh2dXJ1In0.xt0czM2gP0hDBmji3mGIcQ';
+      var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/streets-v9', // stylesheet location
+      center: [36.230383, 49.993500], // starting position [lng, lat]
+      zoom: 12 // starting zoom
+      });
+      map.on('click', function (e) {
+      $("#location").val(e.lngLat.lat + " ; " + e.lngLat.lng);  
+      });
+    </script>
+
+  </div>
+</body>
+
+</html>
