@@ -10,16 +10,6 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign in')
 
-    def validate_username(self, username):
-        user = User.query.filter_by(login=username.data).first()
-        if user is None:
-            raise ValueError('This auth isn\'t already used')
-
-    def validate_email(self, email):
-        user = User.query.filter_by(email=email.data).first()
-        if user is None:
-            raise ValueError('This email is\'t already used')
-
 
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])

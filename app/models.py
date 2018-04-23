@@ -40,7 +40,7 @@ def load_user(id):
 
 class Client(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
-    token = db.Column(db.String(512), unique=True)
+    token = db.Column(db.String(256), unique=True)
     id_user = db.Column(db.Integer, db.ForeignKey("user.id"))
 
     def __repr__(self):

@@ -32,7 +32,7 @@
               <br> </a>
           </li>
           <li class="nav-item mx-2">
-            <a class="nav-link" href="{{ url_for('auth.logout') }}">Регистрация &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+            <a class="nav-link" href="{{ url_for('auth.registration') }}">Регистрация &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
               <br> </a>
           </li>
             {% else %}
@@ -42,9 +42,7 @@
               <a class="dropdown-item" href="#">Личный кабинет</a>
               <a class="dropdown-item" href="{{ url_for('places.new_place') }}">Добавить новое место</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">Смена email</a>
-              <a class="dropdown-item" href="#">Смена пароля</a>
-              <a class="dropdown-item" href="#">Смена логина</a>
+              <a class="dropdown-item" href="{{ url_for('change.change_password') }}">Смена пароля</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выход</a>
               {% endif %}

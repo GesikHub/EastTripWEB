@@ -8,6 +8,8 @@ from app import db
 from flask import render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 from time import time
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 
 
 @bp.route('/newplace', methods=['GET', 'POST'])
@@ -19,11 +21,8 @@ def new_place():
     user = User.query.filter_by(login=current_user.login).first()
     if form.validate_on_submit():
         f = form.upload.data
-        filename = secure_filename(str(time()) + '.jpg')
-        f.save(os.path.join(
-            basedir + '\\picture',  filename
-        ))
-        place = Place(photo_name=filename, name=form.cName.data, name_l=form.lName.data,
+        upload_result = upload(f, width="600", height="300")
+        place = Place(photo_name=upload_result['url'], name=form.cName.data, name_l=form.lName.data,
                       email=form.email.data, website=form.website.data, address=form.cAddress.data,
                       address_l=form.lAddress.data, country=form.country.data, city=form.city.data,
                       type_establ=form.type_establ.data, location=form.location.data, id_user=user.id)
@@ -58,43 +57,45 @@ def new_place():
                                 id_place=place.id)
             db.session.add(time_st)
 
-        comfort = Comfort()
-        if form.tourism.data or form.visitors.data or form.services.data or form.sections_inclusiveness.data:
-            if form.tourism.data:
-                if "Socket" in form.tourism.data:
-                    comfort.socket = True
-                if "WelcomeTourism" in form.tourism.data:
-                    comfort.welcome = True
-            if form.visitors.data:
-                if "ForChildren" in form.visitors.data:
-                    comfort.forChildren = True
-                if "AnimalAccess" in form.visitors.data:
-                    comfort.animal = True
-            if form.services.data:
-                if "RentBikes" in form.services.data:
-                    comfort.rentBikes = True
-                if "Polygraph" in form.services.data:
-                    comfort.polygraph = True
-            if form.sections_inclusiveness.data:
-                if "Ramp" in form.sections_inclusiveness.data:
-                    comfort.ramp = True
-                if "SpecialToilet" in form.sections_inclusiveness.data:
-                    comfort.specialToilet = True
-                if "SpecialService" in form.sections_inclusiveness.data:
-                    comfort.specialService = True
-            comfort.id_place = place.id
-            db.session.add(comfort)
+            comfort = Comfort()
+            if form.tourism.data or form.visitors.data or form.services.data or form.sections_inclusiveness.data:
+                if form.tourism.data:
+                    if "Socket" in form.tourism.data:
+                        comfort.socket = True
+                    if "WelcomeTourism" in form.tourism.data:
+                        comfort.welcome = True
+                if form.visitors.data:
+                    if "ForChildren" in form.visitors.data:
+                        comfort.forChildren = True
+                    if "AnimalAccess" in form.visitors.data:
+                        comfort.animal = True
+                if form.services.data:
+                    if "RentBikes" in form.services.data:
+                        comfort.rentBikes = True
+                    if "Polygraph" in form.services.data:
+                        comfort.polygraph = True
+                if form.sections_inclusiveness.data:
+                    if "Ramp" in form.sections_inclusiveness.data:
+                        comfort.ramp = True
+                    if "SpecialToilet" in form.sections_inclusiveness.data:
+                        comfort.specialToilet = True
+                    if "SpecialService" in form.sections_inclusiveness.data:
+                        comfort.specialService = True
+                comfort.id_place = place.id
+                db.session.add(comfort)
 
-        finance = Finance()
-        if form.way_to_pay.data:
-            if "DebitCard" in form.way_to_pay.data:
-                finance.debit_card = True
-            if "CreditCard" in form.way_to_pay.data:
-                finance.credit_card = True
-            if "ElectronicPayment" in form.way_to_pay.data:
-                finance.electronic_payment = True
-        finance.average_check = form.average_check.data
-        db.session.add(finance)
-        db.session.commit()
+            finance = Finance()
+            if form.way_to_pay.data:
+                if "DebitCard" in form.way_to_pay.data:
+                    finance.debit_card = True
+                if "CreditCard" in form.way_to_pay.data:
+                    finance.credit_card = True
+                if "ElectronicPayment" in form.way_to_pay.data:
+                    finance.electronic_payment = True
+            finance.average_check = form.average_check.data
+            db.session.add(finance)
+            db.session.commit()
+    else:
+        print(form.errors)
 
     return render_template('place/addNewPlace.html', form=form)

@@ -4,7 +4,8 @@ import jwt
 from validate_email import validate_email
 from app.models import User
 from app.models import Client
-from app import app, db
+from app import db
+from eastTrip import app
 
 
 @app.route('/api/auth', methods=['POST'])

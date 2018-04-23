@@ -18,7 +18,6 @@ class PlaceForm(FlaskForm):
     upload = FileField("Image", validators=[FileRequired()])
     cName = StringField("Name", validators=[DataRequired()])
     lName = StringField("L_Name")
-    username = StringField("Username", validators=[DataRequired()])
     email = StringField("Email", validators=[Email()])
     website = StringField("Website")
     cAddress = StringField("Address", validators=[DataRequired()])
@@ -83,10 +82,5 @@ class PlaceForm(FlaskForm):
                                                 default=[''])
 
     location = StringField("Location", validators=[DataRequired()])
-
-    def validate_location(self, location):
-        place = Place.query.filter_by(location=location).first()
-        if place is not None:
-            raise ValueError('Place with it location is already used')
 
 

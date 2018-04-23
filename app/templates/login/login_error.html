@@ -16,11 +16,9 @@
       {{ form.username(placeholder='Username', class="form-control") }}<br>
       <label for="password" class="sr-only">Password</label>
       {{ form.password(placeholder='Password', class="form-control") }}<br>
-        {% for error in form.username.errors %}
-            <div class="alert alert-info">
-            <strong></strong> {{ error }}
-            </div>
-        {% endfor %}
+        <div class="alert alert-info">
+        <strong></strong> Invalid username or password
+        </div>
         <div class="checkbox mb-3">
         <label>
           {{ form.remember_me() }} Remember me
