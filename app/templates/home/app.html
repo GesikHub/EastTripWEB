@@ -39,7 +39,7 @@
             <div class="btn-group pi-draggable" draggable="true">
             <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> {{ current_user.login }} </button>
             <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Личный кабинет</a>
+              <a class="dropdown-item" href="{{ url_for('change.personal') }}">Личный кабинет</a>
               <a class="dropdown-item" href="{{ url_for('places.new_place') }}">Добавить новое место</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{{ url_for('change.change_password') }}">Смена пароля</a>
@@ -85,7 +85,7 @@
           <h2>Пользователи видят вас первыми</h2>
           <p class="my-4 text-muted">Заведения предоставляющие скидки пользователям, идут первыми в списке заведений в городе. Благодаря акциям в East Trip Вы сможете увеличить посещаемость и имидж Вашего заведения, а также создать позитивную картину заведения для туристов, которую
             они будут распространять.&nbsp;</p>
-          <a class="btn btn-outline-primary" href="#features">Как работает весь цыкл?</a>
+          <a class="btn btn-outline-primary" href="#features">Как работает весь цикл?</a>
         </div>
       </div>
       <div class="row pt-5">
