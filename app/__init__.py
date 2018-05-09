@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_admin import Admin
 from flask_login import LoginManager
 from flask_bootstrap import Bootstrap
+from flask_restful import Resource, reqparse
 
 
 bootstrap = Bootstrap()
@@ -33,6 +34,9 @@ def create_app():
 
     from app.change import bp as bp_change
     app.register_blueprint(bp_change)
+
+    from app.api import bp as bp_api
+    app.register_blueprint(bp_api)
 
     from app.admin import HomeAdminView
     admins = Admin(app, name='eastTrip', template_mode='bootstrap3', url='/', index_view=HomeAdminView('Home'))
