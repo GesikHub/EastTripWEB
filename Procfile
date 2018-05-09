@@ -1,1 +1,1 @@
-web: flask db upgrade; gunicorn eastTrip:app
+web: gunicorn eastTrip:app
