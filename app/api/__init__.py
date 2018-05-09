@@ -5,4 +5,4 @@ bp = Blueprint('api_bp', __name__)
 api = Api(bp)
 
 
-from app.api_bp import routes
+from app.api import routes
