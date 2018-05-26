@@ -18,7 +18,7 @@ class MainWindow(Resource):
             val = result[0]['rate']
             time = str(datetime.datetime.now(mytz).hour) + ':' + str(datetime.datetime.now(mytz).minute)
             data = datetime.datetime.now(mytz).day
-            return {'message': {'weather': weather, 'currency': val, 'time': time, 'data': data}}, 200
+            return {'message': {'weather': int(weather), 'currency': int(val), 'time': time, 'data': data}}, 200
         except Exception as e:
             return {'message': e}, 400
 
