@@ -188,7 +188,7 @@ class Photo(db.Model):
 
 
 class DateMainWindow(db.Model):
-    time_zone = db.Column(db.Integer())
+    time_zone = db.Column(db.Integer(), primary_key=True)
     weather = db.Column(db.Integer())
     euro = db.Column(db.Integer())
 
