@@ -4,6 +4,7 @@ import pytz
 import datetime
 from requests import get
 
+week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
 
 class MainWindow(Resource):
@@ -18,7 +19,7 @@ class MainWindow(Resource):
             val = result[0]['rate']
             time = str(datetime.datetime.now(mytz).hour) + ':' + str(datetime.datetime.now(mytz).minute)
             data = datetime.datetime.now(mytz).day
-            return {'message': {'weather': int(weather), 'currency': int(val), 'time': time, 'data': data}}, 200
+            return {'message': {'weather': int(weather), 'currency': int(val), 'time': time, 'data': 'data, week_day': week[datetime.datetime.now(mytz).weekday()]}}, 200
         except Exception as e:
             return {'message': e}, 400
 
