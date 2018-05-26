@@ -185,3 +185,12 @@ class Photo(db.Model):
 
     def __repr__(self):
         return '<Photo %r>' % self.url
+
+
+class DateMainWindow(db.Model):
+    time_zone = db.Column(db.Integer())
+    weather = db.Column(db.Integer())
+    euro = db.Column(db.Integer())
+
+    def __repr__(self):
+        return '<Date %r>' % self.time_zone
