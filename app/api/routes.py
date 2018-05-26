@@ -12,10 +12,10 @@ class MainWindow(Resource):
             mytz = pytz.timezone('Europe/Kiev')
             result = get('https://api.apixu.com/v1/forecast.json?key=0cf0ec96a5eb4feb87b115613180905&q=Kharkiv',
                          data={}).json()
-            weather = int(result['forecast']['forecastday'][0]['day']['avgtemp_c'])
+            weather = result['forecast']['forecastday'][0]['day']['avgtemp_c']
             result = get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json&valcode=EUR',
                          data={}).json()
-            val = int(result[0]['rate'])
+            val = result[0]['rate']
             time = datetime.datetime.now(mytz).hour + ':' + datetime.datetime.now(mytz).minute
             data = datetime.datetime.now(mytz).day
             return {'message': {'weather': weather, 'currency': val, 'time': time, 'data': data}}, 200
