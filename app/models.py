@@ -53,6 +53,7 @@ class Route(db.Model):
     average_check = db.Column(db.Float())
     time = db.Column(db.Float())
     distance = db.Column(db.Float())
+    points = db.relationship('Point', backref='points', lazy='dynamic')
 
     def __repr__(self):
         return  '<Route %r>' % self.name
