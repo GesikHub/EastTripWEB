@@ -29,28 +29,19 @@ def create_app():
     from app.main import bp as bp_main
     app.register_blueprint(bp_main)
 
-    from app.places import bp as bp_place
-    app.register_blueprint(bp_place)
-
-    from app.change import bp as bp_change
-    app.register_blueprint(bp_change)
-
     from app.api import bp as bp_api
     app.register_blueprint(bp_api)
 
     from app.admin import HomeAdminView
     admins = Admin(app, name='eastTrip', template_mode='bootstrap3', url='/', index_view=HomeAdminView('Home'))
 
-    from app.models import (User, Role, Client, Place,
-                            TimeTable, Comfort, Finance)
+    from app.models import (User, Role, Language, Route, Point)
     from app.admin import AdminView
 
     admins.add_view(AdminView(User, db.session))
     admins.add_view(AdminView(Role, db.session))
-    admins.add_view(AdminView(Client, db.session))
-    admins.add_view(AdminView(Place, db.session))
-    admins.add_view(AdminView(TimeTable, db.session))
-    admins.add_view(AdminView(Comfort, db.session))
-    admins.add_view(AdminView(Finance, db.session))
+    admins.add_view(AdminView(Language, db.session))
+    admins.add_view(AdminView(Route, db.session))
+    admins.add_view(AdminView(Point, db.session))
 
     return app

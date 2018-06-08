@@ -11,8 +11,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255))
     active = db.Column(db.Boolean())
     role_id = db.Column(db.Integer(), db.ForeignKey('role.id'))
-    clients = db.relationship('Client', backref='clients', lazy='dynamic')
-    place_user = db.relationship('PlaceUser', backref='places', lazy='dynamic')
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -39,154 +37,6 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class Client(db.Model):
-    id = db.Column(db.Integer(), primary_key=True)
-    token = db.Column(db.String(256), unique=True)
-    id_user = db.Column(db.Integer, db.ForeignKey("user.id"))
-
-    def __repr__(self):
-        return '<Client %r>' % (self.token)
-
-
-class Place(db.Model):
-    id_place = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(64))
-    description = db.Column(db.String(500))
-    email = db.Column(db.String(350))
-    website = db.Column(db.String(70))
-    country = db.Column(db.String(60))
-    city = db.Column(db.String(150))
-    location = db.Column(db.String(40))
-    address = db.Column(db.String(100))
-    place_user = db.relationship('PlaceUser', backref='users', lazy='dynamic')
-    place_category = db.relationship('CategoryPlace', backref='categories', lazy='dynamic')
-    finance = db.relationship('Finance', backref='finances', lazy='dynamic')
-    timetable_day = db.relationship('TimeTableDay', backref='timetable', lazy='dynamic')
-    translate = db.relationship('Translate', backref='translate', lazy='dynamic')
-    comfort = db.relationship('ComfortPlace', backref='comfort', lazy='dynamic')
-    payment_method = db.relationship('PaymentMethodPlace', backref='methods', lazy='dynamic')
-    photo = db.relationship('Photo', backref='photos', lazy='dynamic')
-
-    def __repr__(self):
-        return '<Place %r>' % self.name_l
-
-
-
-class PlaceUser(db.Model):
-    id_place_user = db.Column(db.Integer(), primary_key=True)
-    id_user = db.Column(db.Integer(), db.ForeignKey('user.id'), nullable=False)
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'), nullable=False)
-
-    def __repr__(self):
-        return '<PlaceUser %r>' % str(self.id_user + ' ' + self.id_place)
-
-
-class Category(db.Model):
-    id_category = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(12))
-    id_supergroup = db.Column(db.Integer())
-    places = db.relationship('CategoryPlace', backref='places', lazy='dynamic')
-
-    def __repr__(self):
-        return '<Category %r>' % self.name
-
-
-class CategoryPlace(db.Model):
-    id_category_place = db.Column(db.Integer(), primary_key=True)
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-    id_category = db.Column(db.Integer(), db.ForeignKey('category.id_category'))
-
-    def __repr__(self):
-        return '<CategoryPlace %r>' % str(self.id_category + ' ' + self.id_place)
-
-
-class Finance(db.Model):
-    id_finance = db.Column(db.Integer(), primary_key=True)
-    average_check = db.Column(db.Integer())
-    currency = db.Column(db.Enum(CurrencyEnum))
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-
-    def __repr__(self):
-        return '<Finance %r>' % self.id_finance
-
-
-class TimeTable(db.Model):
-    id_timetable = db.Column(db.Integer(), primary_key=True)
-    open_time = db.Column(db.Time())
-    close_time = db.Column(db.Time())
-    days = db.relationship('TimeTableDay', backref='days', lazy='dynamic')
-
-    def __repr__(self):
-        return '<TimeTable %r>' % str(self.open_time + '-' + self.close_time)
-
-
-class TimeTableDay(db.Model):
-    id_timetable_day = db.Column(db.Integer(), primary_key=True)
-    day = db.Column(db.Enum(DayEnum))
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-    id_timetable = db.Column(db.Integer(), db.ForeignKey('time_table.id_timetable'))
-
-    def __repr__(self):
-        return '<TimeTableDay %r>' % self.day
-
-
-class Translate(db.Model):
-    id_translate = db.Column(db.Integer(), primary_key=True)
-    language = db.Column(db.Enum(LanguageEnum))
-    name = db.Column(db.String(64))
-    description = db.Column(db.String(500))
-    address = db.Column(db.String(100))
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-
-    def __repr__(self):
-        return '<Translate %r>' % self.name + self.language.value
-
-
-class Comfort(db.Model):
-    id_comfort = db.Column(db.Integer(), primary_key=True)
-    type = db.Column(db.Enum(ComfortEnum))
-    place = db.relationship('ComfortPlace', backref='places', lazy='dynamic')
-
-    def __repr__(self):
-        return '<Comfort %r>' % self.type
-
-
-class ComfortPlace(db.Model):
-    id_comfort_place = db.Column(db.Integer(), primary_key=True)
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-    id_comfort = db.Column(db.Integer(), db.ForeignKey('comfort.id_comfort'))
-
-    def __repr__(self):
-        return '<ComfortPlace %r>' % self.id_place + ' ' + self.id_comfort
-
-
-class PaymentMethod(db.Model):
-    id_payment_method = db.Column(db.Integer(), primary_key=True)
-    type = db.Column(db.Enum(PaymentMethodEnum))
-    place = db.relationship('PaymentMethodPlace', backref='places', lazy='dynamic')
-
-    def __repr__(self):
-        return '<PaymentMethod %r>' % self.type
-
-
-class PaymentMethodPlace(db.Model):
-    id_payment_place = db.Column(db.Integer(), primary_key=True)
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-    id_payment_method = db.Column(db.Integer(), db.ForeignKey('payment_method.id_payment_method'))
-
-    def __repr__(self):
-        return '<PaymentMethodPlace %r>' % self.id_place + ' ' + self.id_payment_method
-
-
-class Photo(db.Model):
-    id_photo = db.Column(db.Integer(), primary_key=True)
-    url = db.Column(db.String(256))
-    id_place = db.Column(db.Integer(), db.ForeignKey('place.id_place'))
-
-    def __repr__(self):
-        return '<Photo %r>' % self.url
-
-
 class DateMainWindow(db.Model):
     time_zone = db.Column(db.Integer(), primary_key=True)
     weather = db.Column(db.Integer())
@@ -194,3 +44,45 @@ class DateMainWindow(db.Model):
 
     def __repr__(self):
         return '<Date %r>' % self.time_zone
+
+
+class Route(db.Model):
+    id_route = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(256))
+    language = db.Column(db.Integer(), db.ForeignKey('language.id_language'))
+    average_check = db.Column(db.Float())
+    time = db.Column(db.Float())
+    distance = db.Column(db.Float())
+
+    def __repr__(self):
+        return  '<Route %r>' % self.name
+
+    def to_json(self):
+        return {'id': self.id_route ,'name': self.name, 'average_check': self.average_check, 'time': self.time,
+                'distance': self.distance}
+
+
+class Language(db.Model):
+    id_language = db.Column(db.Integer(), primary_key=True)
+    type = db.Column(db.String(5))
+
+
+class Point(db.Model):
+    id_point = db.Column(db.Integer(), primary_key=True)
+    id = db.Column(db.String(10))
+    latitude = db.Column(db.String(15))
+    longitude = db.Column(db.String(15))
+    title = db.Column(db.String(100))
+    subtitle = db.Column(db.String(100))
+    illustration = db.Column(db.String(100))
+    route = db.Column(db.Integer(), db.ForeignKey('route.id_route'))
+
+    def __repr__(self):
+        return  '<Point %r>' % self.title
+
+    def to_json(self):
+        return { 'coordinates': {'latitude': self.latitude, 'longitude': self.longitude,},
+        'title': self.title,
+        'id': self.id,
+        'subtitle': self.subtitle,
+        'illustration': self.illustration }
