@@ -31,7 +31,7 @@ Flask-OAuthlib==0.9.4
 Flask-Principal==0.4.0
 Flask-RESTful==0.3.6
 Flask-Security==3.0.0
-Flask-SQLAlchemy==1.2.0b3
+Flask-SQLAlchemy==1.2.3
 Flask-Uploads==0.2.1
 Flask-User==0.6.19
 Flask-WTF==0.14.2
