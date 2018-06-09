@@ -44,3 +44,8 @@ class HomeAdminView(AdminIndexView):
 class RouteView(ModelView):
     list_columns = ('id_route', 'language', 'name',)
     form_columns = ('id_route', 'language', 'name',)
+
+
+class PointView(ModelView):
+    list_columns = ('id_point', 'language', 'title',)
+    form_columns = ('id_point', 'language', 'title',)
