@@ -35,7 +35,7 @@ def create_app():
     from app.admin import HomeAdminView
     admins = Admin(app, name='eastTrip', template_mode='bootstrap3', url='/', index_view=HomeAdminView('Home'))
 
-    from app.models import (User, Role, Language, Route, Point)
+    from app.models import (User, Role, Language, Route, Point, RouteName)
     from app.admin import AdminView
 
     admins.add_view(AdminView(User, db.session))
@@ -43,5 +43,6 @@ def create_app():
     admins.add_view(AdminView(Language, db.session))
     admins.add_view(AdminView(Route, db.session))
     admins.add_view(AdminView(Point, db.session))
+    admins.add_view(AdminView(RouteName, db.session))
 
     return app

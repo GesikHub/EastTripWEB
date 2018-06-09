@@ -46,26 +46,38 @@ class DateMainWindow(db.Model):
         return '<Date %r>' % self.time_zone
 
 
+class RouteName(db.Model):
+    id_route = db.Column(db.Integer(), db.ForeignKey('route.id_route'), primary_key=True)
+    language = db.Column(db.Integer(), db.ForeignKey('language.id_language'), primary_key=True)
+    name = db.Column(db.String(256))
+
+    def __repr__(self):
+        return '<Name %r>' % self.name
+
+
 class Route(db.Model):
     id_route = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(256))
-    language = db.Column(db.Integer(), db.ForeignKey('language.id_language'))
     average_check = db.Column(db.Float())
     time = db.Column(db.Float())
     distance = db.Column(db.Float())
+    photo_url = db.Column(db.String(200))
     points = db.relationship('Point', backref='points', lazy='dynamic')
 
     def __repr__(self):
-        return  '<Route %r>' % self.name
+        return '<Route %r>' % self.id_route
 
-    def to_json(self):
-        return {'id': self.id_route ,'name': self.name, 'average_check': self.average_check, 'time': self.time,
+    def to_json(self, id_language):
+        name = RouteName.query.filter_by(language=id_language).first()
+        if name is None:
+            return {}
+        return {'id': self.id_route, 'name': name.name, 'average_check': self.average_check, 'time': self.time,
                 'distance': self.distance}
 
 
 class Language(db.Model):
     id_language = db.Column(db.Integer(), primary_key=True)
     type = db.Column(db.String(5))
+    routes = db.relationship('RouteName', backref='Language', lazy='dynamic')
 
 
 class Point(db.Model):
