@@ -39,3 +39,7 @@ class HomeAdminView(AdminIndexView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('auth.login', next=request.url))
+
+
+class RouteView(AdminIndexView):
+    list_columns = ('id_route', 'language', 'name',)
