@@ -77,7 +77,7 @@ class Route(db.Model):
 
     def to_json(self):
         return {'id': self.id_route, 'average_check': self.average_check, 'time': self.time,
-                'distance': self.distance}
+                'distance': self.distance, 'photo_url': self.photo_url}
 
 class Language(db.Model):
     id_language = db.Column(db.Integer(), primary_key=True)
