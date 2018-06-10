@@ -59,6 +59,7 @@ class RouteName(db.Model):
         if data is None:
             return {}
         else:
+            data = data.to_json()
             data['name'] = self.name
             return data
 
