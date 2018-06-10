@@ -74,7 +74,7 @@ class Route(db.Model):
     def __repr__(self):
         return '<Route %r>' % self.id_route
 
-    def to_json(self, id_language):
+    def to_json(self):
         return {'id': self.id_route, 'average_check': self.average_check, 'time': self.time,
                 'distance': self.distance}
 
