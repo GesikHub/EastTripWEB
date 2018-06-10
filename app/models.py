@@ -54,6 +54,14 @@ class RouteName(db.Model):
     def __repr__(self):
         return '<Name %r>' % self.name
 
+    def to_json(self):
+        data = Route.query.filter_by(id_route=self.id_route).first()
+        if data is None:
+            return {}
+        else:
+            data['name'] = self.name
+            return data
+
 
 class Route(db.Model):
     id_route = db.Column(db.Integer(), primary_key=True)
@@ -67,12 +75,8 @@ class Route(db.Model):
         return '<Route %r>' % self.id_route
 
     def to_json(self, id_language):
-        name = RouteName.query.filter_by(language=id_language).first()
-        if name is None:
-            return {}
-        return {'id': self.id_route, 'name': name.name, 'average_check': self.average_check, 'time': self.time,
+        return {'id': self.id_route, 'average_check': self.average_check, 'time': self.time,
                 'distance': self.distance}
-
 
 class Language(db.Model):
     id_language = db.Column(db.Integer(), primary_key=True)

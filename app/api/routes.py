@@ -3,7 +3,7 @@ from flask_restful import Resource
 import pytz
 import datetime
 from requests import get
-from app.models import Route as Route_db, Point as Point_db, Language
+from app.models import Route as Route_db, Point as Point_db, Language, RouteName
 
 week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
 
@@ -33,8 +33,8 @@ class Route(Resource):
             if lan is None:
                 return {'message': []}, 200
             else:
-                return {'message': [route.to_json() for route in Route_db.query.filter_by(language=lan.id_language
-                                                                                      ).all()]}, 200
+                return {'message': [route.to_json(language) for route in RouteName.query.filter_by(
+                    language=lan.id_language).all()]}, 200
         except Exception as e:
             return {'message': e}, 400
 
