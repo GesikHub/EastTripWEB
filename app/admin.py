@@ -41,5 +41,5 @@ class HomeAdminView(AdminIndexView):
         return redirect(url_for('auth.login', next=request.url))
 
 
-class RouteView(AdminIndexView):
+class RouteView(ModelView):
     list_columns = ('id_route', 'language', 'name',)
