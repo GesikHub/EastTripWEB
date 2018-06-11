@@ -86,7 +86,7 @@ class Language(db.Model):
 
 
 class PointName(db.Model):
-    id_point = db.Column(db.Integer(), db.ForeignKey('point.id_point'), primary_key=True)
+    id_point = db.Column(db.Integer(), db.ForeignKey('point.id'), primary_key=True)
     language = db.Column(db.Integer(), db.ForeignKey('language.id_language'), primary_key=True)
     id_route = db.Column(db.Integer(), db.ForeignKey('route.id_route'))
     title = db.Column(db.String(256))

@@ -41,12 +41,12 @@ class Route(Resource):
 
 class Point(Resource):
 
-    def get(self, id_route, language):
+    def get(self, id_point, language):
         try:
             lan = Language.query.filter_by(type=language).first()
             if lan is None:
                 return {'message': []}, 200
-            return {'message': [point.to_json() for point in Point_db.query.filter_by(id_route=id_route,
+            return {'message': [point.to_json() for point in Point_db.query.filter_by(id_route=id_point,
                                                                                       language=lan.id_language).all()]}, 200
         except Exception as e:
             return {'message': e}, 400
