@@ -95,7 +95,7 @@ class PointName(db.Model):
         return '<PointName %r>' % self.title
 
     def to_json(self):
-        data = Point.query.filter_by(id_point=self.id_point).first()
+        data = Point.query.filter_by(id=self.id_point).first()
         if data is None:
             return {}
         else:
