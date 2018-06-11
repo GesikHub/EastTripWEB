@@ -1,7 +1,6 @@
 from flask_user import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
 from app import db, login
-from db_enum import CurrencyEnum, DayEnum, LanguageEnum, ComfortEnum, PaymentMethodEnum
 
 
 class User(db.Model, UserMixin):
@@ -70,7 +69,7 @@ class Route(db.Model):
     time = db.Column(db.Float())
     distance = db.Column(db.Float())
     photo_url = db.Column(db.String(200))
-    points = db.relationship('Point', backref='points', lazy='dynamic')
+    points = db.relationship('PointName', backref='points', lazy='dynamic')
 
     def __repr__(self):
         return '<Route %r>' % self.id_route
@@ -85,22 +84,38 @@ class Language(db.Model):
     routes = db.relationship('RouteName', backref='Language', lazy='dynamic')
 
 
+class PointName(db.Model):
+    id_point = db.Column(db.Integer(), db.ForeignKey('point.id_point'), primary_key=True)
+    language = db.Column(db.Integer(), db.ForeignKey('language.id_language'), primary_key=True)
+    id_route = db.Column(db.Integer(), db.ForeignKey('route.id_route'))
+    title = db.Column(db.String(256))
+
+    def __repr__(self):
+        return '<PointName %r>' % self.title
+
+    def to_json(self):
+        data = Point.query.filter_by(id_point=self.id_point).first()
+        if data is None:
+            return {}
+        else:
+            data = data.to_json()
+            data['title'] = self.title
+            return data
+
+
 class Point(db.Model):
     id_point = db.Column(db.Integer(), primary_key=True)
     id = db.Column(db.String(10))
     latitude = db.Column(db.String(15))
     longitude = db.Column(db.String(15))
-    title = db.Column(db.String(100))
     subtitle = db.Column(db.String(100))
     illustration = db.Column(db.String(100))
-    route = db.Column(db.Integer(), db.ForeignKey('route.id_route'))
 
     def __repr__(self):
         return  '<Point %r>' % self.title
 
     def to_json(self):
-        return { 'coordinates': {'latitude': self.latitude, 'longitude': self.longitude,},
-        'title': self.title,
+        return { 'coordinates': {'latitude': self.latitude, 'longitude': self.longitude},
         'id': self.id,
         'subtitle': self.subtitle,
         'illustration': self.illustration }
