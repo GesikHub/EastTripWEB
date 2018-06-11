@@ -48,4 +48,4 @@ class RouteView(ModelView):
 
 class PointView(ModelView):
     list_columns = ('id_point', 'language', 'title',)
-    form_columns = ('id_point', 'language', 'title',)
+    form_columns = ('id_point', 'language', 'title', 'id_route',)
