@@ -74,9 +74,14 @@ class Route(db.Model):
     def __repr__(self):
         return '<Route %r>' % self.id_route
 
-    def to_json(self):
+    def to_json(self, id_language):
         return {'id': self.id_route, 'average_check': self.average_check, 'time': self.time,
-                'distance': self.distance, 'photo_url': self.photo_url}
+                'distance': self.distance, 'photo_url': self.photo_url, 'count_place': self.count_place(id_language)}
+
+    def count_place(self, id_language):
+        point_list = [point.id_point for point in PointName.query.filter_by(id_route = self.id_route,
+                                                                            language=id_language).all()]
+        return len(set(point_list))
 
 
 class Language(db.Model):
