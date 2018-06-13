@@ -58,7 +58,7 @@ class RouteName(db.Model):
         if data is None:
             return {}
         else:
-            data = data.to_json()
+            data = data.to_json(self.language)
             data['name'] = self.name
             return data
 
@@ -79,7 +79,7 @@ class Route(db.Model):
                 'distance': self.distance, 'photo_url': self.photo_url, 'count_place': self.count_place(id_language)}
 
     def count_place(self, id_language):
-        point_list = [point.id_point for point in PointName.query.filter_by(id_route = self.id_route,
+        point_list = [point.id_point for point in PointName.query.filter_by(id_route=self.id_route,
                                                                             language=id_language).all()]
         return len(set(point_list))
 

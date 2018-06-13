@@ -33,7 +33,7 @@ class Route(Resource):
             if lan is None:
                 return {'message': []}, 200
             else:
-                return {'message': [route.to_json(lan.id_language) for route in RouteName.query.filter_by(
+                return {'message': [route.to_json() for route in RouteName.query.filter_by(
                     language=lan.id_language).all()]}, 200
         except Exception as e:
             return {'message': e}, 400
