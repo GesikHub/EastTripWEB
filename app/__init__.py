@@ -33,17 +33,25 @@ def create_app():
     app.register_blueprint(bp_api)
 
     from app.admin import HomeAdminView
-    admins = Admin(app, name='eastTrip', template_mode='bootstrap3', url='/', index_view=HomeAdminView('Home'))
+    admin = Admin(app, name='eastTrip', template_mode='bootstrap3', url='/', index_view=HomeAdminView('Admin panel'))
 
-    from app.models import (User, Role, Language, Route, Point, RouteName, PointName)
-    from app.admin import AdminView, RouteView, PointView
+    import app.models as models
+    from app.admin import AdminView
 
-    admins.add_view(AdminView(User, db.session))
-    admins.add_view(AdminView(Role, db.session))
-    admins.add_view(AdminView(Language, db.session))
-    admins.add_view(AdminView(Route, db.session))
-    admins.add_view(AdminView(Point, db.session))
-    admins.add_view(RouteView(RouteName, db.session))
-    admins.add_view(PointView(PointName, db.session))
-
+    admin.add_view(AdminView(models.Place, db.session))
+    admin.add_view(AdminView(models.User, db.session))
+    admin.add_view(AdminView(models.Role, db.session))
+    admin.add_view(AdminView(models.PlaceUser, db.session))
+    admin.add_view(AdminView(models.Category, db.session))
+    admin.add_view(AdminView(models.CategoryPlace, db.session))
+    admin.add_view(AdminView(models.CurrencyType, db.session))
+    admin.add_view(AdminView(models.TimeTable, db.session))
+    admin.add_view(AdminView(models.TimeTableDay, db.session))
+    admin.add_view(AdminView(models.Translate, db.session))
+    admin.add_view(AdminView(models.Language, db.session))
+    admin.add_view(AdminView(models.Service, db.session))
+    admin.add_view(AdminView(models.ServicePlace, db.session))
+    admin.add_view(AdminView(models.PaymentMethod, db.session))
+    admin.add_view(AdminView(models.PaymentMethodPlace, db.session))
+    admin.add_view(AdminView(models.Photo, db.session))
     return app

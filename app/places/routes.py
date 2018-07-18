@@ -18,7 +18,6 @@ def new_place():
                       email=form.email.data, website=form.website.data, address=form.cAddress.data,
                       country=form.country.data, city=form.city.data,
                       rating=0, number_of_reviews=0)
-        photo = Photo(id_place=place.id_place, url=upload_result['url'])
         place.latitude = form.location.data.split(';')[0].rstrip()
         place.longitude = form.location.data.split(';')[1].rstrip()
         db.session.add(place)
@@ -60,9 +59,7 @@ def new_place():
 @bp.route('/add_description&lan=<lan>&place=<place>', methods=['GET', 'POST'])
 def add_description(lan, place):
     form = places.forms.DescriptionForm(lan, place)
-    print('hi')
     #if form.validate_on_submit():
-    print('hi')
     translate = Translate.query.filter_by(id_place=int(place),
                           language=Language.query.filter_by(type=lan).first().id_language).first()
     if translate is None:

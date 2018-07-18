@@ -39,6 +39,7 @@
             <div class="btn-group pi-draggable" draggable="true">
             <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown"> {{ current_user.login }} </button>
             <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ url_for('places.new_place') }}">Добавить новое место</a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Выход</a>
               {% endif %}
