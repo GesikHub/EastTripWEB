@@ -1,57 +1,96 @@
 from app.api import api
-from flask_restful import Resource
-import pytz
-import datetime
-from requests import get
-from app.models import Route as Route_db, PointName as Point_db, Language, RouteName
+from flask_restful import Resource, reqparse
+from app.models import User as User_db
+from app.models import Category as Category_db
+from app.models import Place as Place_db
+from app.models import CategoryPlace as CategoryPlace_db
+from app import db
 
-week = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN']
+
+class UserAdd(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('id_user', type=int, help='Error')
+    parser.add_argument('login', help='Error')
+    parser.add_argument('name', help='Error')
+    parser.add_argument('surname', help='Error')
+    parser.add_argument('latitude', type=float, help='Error')
+    parser.add_argument('longitude', type=float, help='Error')
+
+    def post(self):
+        data = self.parser.parse_args()
+        user = User_db.query.filter_by(id_user=data['id_user']).first()
+        try:
+            if user is None:
+                user = User_db(id_user=data['id_user'], login=data['login'], name=data['name'], surname=data['surname'],
+                               latitude=data['latitude'], longitude=data['longitude'])
+                db.session.add(user)
+                db.session.commit()
+                return {'message': {'add_user': 'Create!'}}, 200
+            return {'message': {'add_user': 'User exists'}}, 201
+        except Exception as e:
+            return {'message': e}, 400
 
 
-class MainWindow(Resource):
+class CategoryApi(Resource):
+
     def get(self):
         try:
-            mytz = pytz.timezone('Europe/Kiev')
-            result = get('https://api.apixu.com/v1/forecast.json?key=0cf0ec96a5eb4feb87b115613180905&q=Kharkiv',
-                         data={}).json()
-            weather = result['forecast']['forecastday'][0]['day']['avgtemp_c']
-            result = get('https://bank.gov.ua/NBUStatService/v1/statdirectory/exchange?json&valcode=EUR',
-                         data={}).json()
-            val = result[0]['rate']
-            time = str(datetime.datetime.now(mytz).hour) + ':' + str(datetime.datetime.now(mytz).minute)
-            data = datetime.datetime.now(mytz).day
-            return {'message': {'weather': int(weather), 'currency': int(val), 'time': time, 'data': data, 'week_day': week[datetime.datetime.now(mytz).weekday()]}}, 200
+            category = [category.name for category in
+                         Category_db.query.order_by(Category_db.name).filter_by(id_supergroup='').all()]
+            return {'message': category}, 200
         except Exception as e:
             return {'message': e}, 400
 
 
-class Route(Resource):
+class SubCategory(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('category')
 
-    def get(self, language):
+    def get(self):
+        data = self.parser.parse_args()
         try:
-            lan = Language.query.filter_by(type=language).first()
-            if lan is None:
-                return {'message': []}, 200
-            else:
-                return {'message': [route.to_json() for route in RouteName.query.filter_by(
-                    language=lan.id_language).all()]}, 200
+            category = [category.name for category in Category_db.query.filter_by(
+                id_supergroup=Category_db.query.filter_by(name=data['category']).first().id_category).all()]
+            return {'message': category}, 200
         except Exception as e:
             return {'message': e}, 400
 
 
-class Point(Resource):
+class PlaceApi(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('category')
+    parser.add_argument('num')
 
-    def get(self, id_point, language):
+    def get(self):
+        data = self.parser.parse_args()
         try:
-            lan = Language.query.filter_by(type=language).first()
-            if lan is None:
-                return {'message': []}, 200
-            return {'message': [point.to_json() for point in Point_db.query.filter_by(id_route=id_point,
-                                                                                      language=lan.id_language).all()]}, 200
+            place_id = [place.id_place for place in CategoryPlace_db.query.filter_by(id_category=
+                                                                                    Category_db.query.filter_by(
+                                                                                    name=data['category']).first().id_category).all()]
+            for id in place_id:
+                places = [place.get_information() for place in Place_db.query.filter_by(
+                    id_place=id).all()]
+            return {'message': places}
         except Exception as e:
             return {'message': e}, 400
 
 
-api.add_resource(MainWindow, '/api/data_main')
-api.add_resource(Route, '/api/route/<language>')
-api.add_resource(Point, '/api/route_point/<id_point>/<language>')
+class OnePlace(Resource):
+    parser = reqparse.RequestParser()
+    parser.add_argument('id_place')
+
+    def get(self):
+        data = self.parser.parse_args()
+        try:
+
+            place = Place_db.query.filter_by(id_place=data['id_place']).first()
+            places = place.get_information()
+            return {'message': places}
+        except Exception as e:
+            return {'message': e}, 400
+
+
+api.add_resource(CategoryApi, '/api/category')
+api.add_resource(SubCategory, '/api/subcategory')
+api.add_resource(PlaceApi, '/api/place')
+api.add_resource(OnePlace, '/api/place_id')
