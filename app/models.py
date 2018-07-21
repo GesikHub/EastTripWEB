@@ -117,7 +117,7 @@ class Place(db.Model):
 
 
 class PlaceUser(db.Model):
-    id_user = db.Column(db.Integer, db.ForeignKey('user.id_user'), nullable=False, primary_key=True)
+    id_user = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False, primary_key=True)
     id_place = db.Column(db.Integer, db.ForeignKey('place.id_place'), nullable=False, primary_key=True)
 
     def __repr__(self):

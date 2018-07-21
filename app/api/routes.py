@@ -92,5 +92,5 @@ class OnePlace(Resource):
 
 api.add_resource(CategoryApi, '/api/category')
 api.add_resource(SubCategory, '/api/subcategory')
-api.add_resource(PlaceApi, '/api/place')
+api.add_resource(PlaceApi, '/api/places')
 api.add_resource(OnePlace, '/api/place_id')

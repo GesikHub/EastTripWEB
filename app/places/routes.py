@@ -1,16 +1,15 @@
 from app.places import bp
-from app import places
 from app import db
 from flask import render_template, redirect, url_for
 from cloudinary.uploader import upload
 from app.models import Category, CategoryPlace, Place, CurrencyType, Translate, Language, Photo
 from db_enum import DayEnum
-from cloudinary.utils import cloudinary_url
+from app.places import forms
 
 
 @bp.route('/newplace', methods=['GET', 'POST'])
-def new_place():
-    form = places.forms.PlaceForm()
+def newplace():
+    form = forms.PlaceForm()
     if form.validate_on_submit():
         f = form.upload.data
         upload_result = upload(f, width="600", height="300")
@@ -53,12 +52,12 @@ def new_place():
         url_for('places.add_description', lan="ENG", place=place.id_place)
     else:
         print(form.errors)
-    return render_template('place/addNewPlace.html', form=form)
+    return render_template('places/addNewPlace.html', form=form)
 
 
-@bp.route('/add_description&lan=<lan>&place=<place>', methods=['GET', 'POST'])
+@bp.route('/add_description&lan=<lan>&places=<place>', methods=['GET', 'POST'])
 def add_description(lan, place):
-    form = places.forms.DescriptionForm(lan, place)
+    form = forms.DescriptionForm(lan, place)
     #if form.validate_on_submit():
     translate = Translate.query.filter_by(id_place=int(place),
                           language=Language.query.filter_by(type=lan).first().id_language).first()
@@ -74,6 +73,6 @@ def add_description(lan, place):
     db.session.commit()
     #else:
     print(form.errors)
-    return render_template('place/addPhrases.html', form=form, place=place)
+    return render_template('places/addPhrases.html', form=form, place=place)
 
 

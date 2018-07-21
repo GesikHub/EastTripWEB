@@ -5,11 +5,9 @@ from flask_uploads import UploadSet, IMAGES
 from flask_wtf.file import FileField, FileRequired
 from wtforms.validators import DataRequired, Email
 from app.models import Category, Service, CurrencyType, PaymentMethod, Language, Translate
-from app import db
 
 images = UploadSet('images', IMAGES)
-category_list = [(category.type, category.name) for category
-                 in Category.query.filter_by().all() if category.id_supergroup is not '']
+category_list = [(category.type, category.name) for category in Category.query.filter_by().all() if category.id_supergroup is not '']
 service_list = [(service.type, service.name) for service in Service.query.filter_by().all()]
 currency_list = [(currency.type, currency.name) for currency in CurrencyType.query.filter_by().all()]
 payment_list = [(payment.type, payment.name) for payment in PaymentMethod.query.filter_by().all()]
